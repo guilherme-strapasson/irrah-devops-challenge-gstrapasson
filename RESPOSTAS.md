@@ -4,7 +4,8 @@ O usuário acessará o serviço por uma camada de DNS, que normalmente direciona
 A comunicação privada entre as duas nuvens poderá ser realizada por uma VPN site-to-site. Os clusters EKS e OKE não serão sincronizados diretamente entre si. O mesmo pipeline de CI/CD publicará a aplicação, e o Argo CD aplicará os mesmos manifests ou Helm Charts nos dois ambientes, mantendo versões equivalentes da aplicação, com os ajustes necessários para cada nuvem.
 
 Para o banco do ERP, adotaria um banco principal na AWS com replicação contínua para uma réplica na OCI. Em caso de falha do ambiente principal, a réplica da OCI seria promovida para assumir as operações. A escolha entre replicação síncrona ou assíncrona dependeria dos requisitos de RPO e dos testes de latência. Também seria importante garantir que apenas um banco estivesse habilitado para escrita, evitando divergências entre as duas nuvens.
-
+## Diagrama da arquitetura
+![Diagrama da arquitetura multi-cloud](docs/Questao1.png)
 
 # Questão 2: Infraestrutura como Código (IaC) e Segurança
 
