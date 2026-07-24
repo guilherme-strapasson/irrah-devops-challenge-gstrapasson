@@ -33,6 +33,9 @@ Caso a nova versão apresentasse alguma anomalia, o tráfego seria direcionado n
 
 A diferença entre as estratégias de homologação e produção ocorre porque o ambiente produtivo exige maior controle de risco. O Canary consome recursos adicionais e exige mais monitoramento, mas reduz o impacto aos clientes e permite um rollback mais rápido. 
 
+## Diagrama da arquitetura
+![Diagrama da arquitetura Pipeline](docs/Questao3.png)
+
 # Questão 4: Observabilidade e Troubleshooting em Tempo Real
 
 # Questão 5: Engenharia de Performance e Custos em Kubernetes (Prática/Teórica)
