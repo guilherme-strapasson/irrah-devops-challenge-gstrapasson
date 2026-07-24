@@ -21,6 +21,17 @@ O estado do Terraform ficaria armazenado remotamente em um bucket S3 privado, cr
 No pipeline, deixaria etapas básicas como validação, geração do plano e aprovação antes do apply em produção. Teríamos pipelines separados para staging e produção, com permissões mais restritas para executar alterações no ambiente de produção.
 
 # Questão 3: Pipelines CI/CD e Estratégias de Deploy
+Primeiramente, teríamos um pipeline disparado a cada commit ou pull request no repositório. Ele começaria com as etapas de validação e testes do código, incluindo testes unitários, análise de qualidade, verificação de dependências vulneráveis e busca por dados sensíveis expostos.
+
+Após passar por essas etapas, seria gerada a imagem Docker. O versionamento seria feito por tags, utilizando uma versão sequencial junto com o hash do commit, facilitando a identificação exata do código utilizado em cada imagem. Em seguida, a imagem seria escaneada e enviada para um repositório privado no Amazon ECR.
+
+No ambiente de homologação, o deploy seria feito automaticamente utilizando o Rolling Update do Kubernetes. Os pods novos seriam criados gradualmente e só começariam a receber tráfego depois de passarem na readiness probe. Após isso, os pods antigos seriam removidos, evitando indisponibilidade durante a atualização.
+
+Em produção, após a aprovação da versão em homologação, eu utilizaria uma estratégia Canary. A versão antiga continuaria atendendo a maior parte do tráfego, enquanto a nova versão receberia inicialmente uma pequena porcentagem. Durante essa etapa, seriam acompanhados logs, taxa de erros, tempo de resposta e falhas no processamento das mensagens.
+
+Caso a nova versão apresentasse alguma anomalia, o tráfego seria direcionado novamente para a versão anterior e a nova versão seria removida ou corrigida. Se as métricas permanecessem estáveis, o tráfego seria aumentado gradualmente até a nova versão assumir totalmente.
+
+A diferença entre as estratégias de homologação e produção ocorre porque o ambiente produtivo exige maior controle de risco. O Canary consome recursos adicionais e exige mais monitoramento, mas reduz o impacto aos clientes e permite um rollback mais rápido. 
 
 # Questão 4: Observabilidade e Troubleshooting em Tempo Real
 
