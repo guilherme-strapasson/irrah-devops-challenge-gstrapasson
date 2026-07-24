@@ -37,6 +37,23 @@ A diferença entre as estratégias de homologação e produção ocorre porque o
 ![Diagrama da arquitetura Pipeline](docs/Questao3.png)
 
 # Questão 4: Observabilidade e Troubleshooting em Tempo Real
+Primeiramente, eu avaliaria onde está acontecendo o real gargalo da operação. As causas mais prováveis seriam o banco de dados, o cluster Kubernetes, a aplicação ou alguma dependência externa.
+
+Para começar, verificaria no Grafana e no Prometheus se houve aumento no volume de requisições, na latência e na quantidade de erros 4XX e 5XX. Também compararia o momento em que esses indicadores começaram a subir com possíveis deploys ou alterações recentes.
+
+Nos logs da aplicação, procuraria principalmente erros 500, timeouts, falhas de conexão com o banco, pool de conexões esgotado e exceções repetidas. No Jaeger, acompanharia algumas requisições com erro ou lentidão para identificar em qual etapa elas estão gastando mais tempo, por exemplo, aplicação, banco ou integração externa.
+
+Mesmo com o cluster chegando a 98% de CPU, isso não significa necessariamente que ele seja a causa inicial. Um banco de dados lento pode causar acúmulo de requisições, timeouts e novas tentativas, aumentando o consumo da aplicação e do cluster.
+
+Caso o banco seja o principal causador, minha primeira ação seria reduzir a pressão sobre ele, pausando ou limitando temporariamente operações menos críticas, como os disparos de marketing, priorizando as vendas das lojas físicas e online. Também verificaria locks, queries lentas e uso do pool de conexões. Se necessário, avaliaria o aumento temporário de CPU e memória do banco.
+
+Se o gargalo estiver realmente no cluster, verificaria se o HPA está conseguindo subir novos pods e se existem recursos disponíveis nos nodes. Caso não haja capacidade, aumentaria a quantidade de nodes e revisaria os limites configurados no autoscaling.
+
+Depois de cada ação, acompanharia novamente a taxa de erros, latência, CPU, conexões do banco e volume de requisições para confirmar se o ambiente está estabilizando.
+
+Após o incidente, faria um post-mortem contendo o impacto, a linha do tempo, a causa raiz, as ações realizadas e as melhorias necessárias. A análise seria sem buscar culpados, focando no que pode ser melhorado no processo e na infraestrutura.
+
+Como prevenção, poderiam ser ajustados o autoscaling, os alertas, o pool de conexões, os testes de carga e o planejamento de capacidade. Também seria possível mapear datas comerciais com maior volume e aumentar temporariamente os recursos antes desses períodos.
 
 # Questão 5: Engenharia de Performance e Custos em Kubernetes (Prática/Teórica)
 
