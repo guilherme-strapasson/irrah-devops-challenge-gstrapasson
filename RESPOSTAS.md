@@ -8,6 +8,17 @@ Para o banco do ERP, adotaria um banco principal na AWS com replicação contín
 ![Diagrama da arquitetura multi-cloud](docs/Questao1.png)
 
 # Questão 2: Infraestrutura como Código (IaC) e Segurança
+Ainda não trabalhei diretamente com Terraform, então eu descrevi a solução em vez de tentar escrever um código completo.
+
+Eu separaria os ambientes em pastas diferentes, uma para staging e outra para production, usando módulos em comum para criar o cluster Kubernetes, o banco relacional e o bucket de logs.
+
+As variáveis serviriam para mudar configurações entre os ambientes, como tamanho do cluster, capacidade do banco, região e tempo de retenção dos logs. Os outputs mostrariam apenas informações úteis, como nome do cluster, endpoint do banco e nome do bucket, sem expor senhas ou chaves.
+
+As credenciais ficariam em um serviço como o AWS Secrets Manager. Eu evitaria colocar senhas em arquivos .tf, .tfvars ou outputs, e a aplicação buscaria esses dados em tempo de execução usando uma role com acesso somente aos secrets necessários.
+
+O estado do Terraform ficaria armazenado remotamente em um bucket S3 privado, criptografado e com um state separado para cada ambiente. Também usaria state locking para impedir que duas pessoas executassem alterações ao mesmo tempo.
+
+No pipeline, deixaria etapas básicas como validação, geração do plano e aprovação antes do apply em produção. Teríamos pipelines separados para staging e produção, com permissões mais restritas para executar alterações no ambiente de produção.
 
 # Questão 3: Pipelines CI/CD e Estratégias de Deploy
 
