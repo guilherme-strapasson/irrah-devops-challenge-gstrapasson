@@ -56,6 +56,22 @@ Após o incidente, faria um post-mortem contendo o impacto, a linha do tempo, a 
 Como prevenção, poderiam ser ajustados o autoscaling, os alertas, o pool de conexões, os testes de carga e o planejamento de capacidade. Também seria possível mapear datas comerciais com maior volume e aumentar temporariamente os recursos antes desses períodos.
 
 # Questão 5: Engenharia de Performance e Custos em Kubernetes (Prática/Teórica)
+Para esse cenário, primeiro analisaria o histórico de monitoramento para entender o consumo real de CPU, memória e o volume de requisições ao longo do dia. Com esses dados, ajustaria os requests e limits dos containers e configuraria o HPA para aumentar ou reduzir a quantidade de pods conforme a demanda.
+
+Também utilizaria autoscaling nos nodes do cluster. Quando o HPA criasse novos pods e não houvesse mais capacidade disponível, novos nodes seriam adicionados automaticamente. Quando a demanda diminuísse, os pods seriam reduzidos e os nodes que ficassem ociosos poderiam ser removidos.
+
+Em horário comercial, o cluster aumentaria a capacidade para suportar os picos. Durante a madrugada ou em períodos de pouco uso, manteria apenas a quantidade mínima de pods necessária, permitindo reduzir também o número de nodes e evitar o custo de recursos ociosos.
+
+Para processos assíncronos que tolerem interrupção, também avaliaria o uso de instâncias Spot, mantendo uma capacidade mínima em instâncias sob demanda para garantir estabilidade.
 
 # Questão 6: Cultura DevSecOps e Governança (Situacional)
 
+Começaria criando um processo padrão em que nenhuma imagem ou alteração entrasse em produção sem passar pela esteira de CI/CD, incluindo testes, scan de vulnerabilidades e validações de segurança. Caso fossem encontradas vulnerabilidades críticas, o deploy seria bloqueado até a atualização da imagem base ou da dependência afetada.
+
+Para as imagens vulneráveis que já estão em produção, faria um levantamento dos serviços afetados, priorizando os mais críticos e expostos, para corrigir, gerar uma nova imagem e realizar o deploy de forma controlada.
+
+Também limitaria os acessos ao console das nuvens por meio do IAM, seguindo o princípio do menor privilégio. Cada equipe teria somente os acessos realmente necessários, e alterações manuais ficariam restritas a casos emergenciais e a pessoas autorizadas.
+
+Caso fosse necessário realizar uma alteração manual por causa de um incidente ou urgência, ela deveria ser registrada na ferramenta de chamados e posteriormente incluída na infraestrutura como código, para evitar que o ambiente fique diferente do que está versionado.
+
+Para não deixar o processo burocrático, criaria modelos de pipeline, módulos e padrões prontos para os desenvolvedores utilizarem, facilitando a entrega sem abrir mão da segurança e da rastreabilidade.
